@@ -29,8 +29,8 @@ jobs:
     steps:
       - checkout
       - run: |
-          docker build
-          docker push
+          docker build -t leonardlai1222/education-space:initial
+          docker push leonardlai1222/education-space:initial
 
 workflows:
   simple_workflow:
