@@ -29,12 +29,12 @@ jobs:
       - setup_remote_docker
       - checkout
       - docker/check
-      - run:
-          name: Build and push Docker image
-          command: |
-            echo "Building and pushing Docker image..."
-            docker build -t leonardlai1222/education-space:${CIRCLE_TAG} .
-            docker push leonardlai1222/education-space:${CIRCLE_TAG}
+      - docker/build:
+          image: leonardlai1222/education-space
+          tag: 0.1.0
+      - docker/push:
+          image: leonardlai1222/education-space
+          tag: 0.1.0
 
 workflows:
   version: 2
