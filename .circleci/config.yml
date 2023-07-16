@@ -30,11 +30,9 @@ jobs:
       - checkout
       - docker/check
       - docker/build:
-          image: leonardlai1222/education-space
-          tag: 0.1.0
+          image: leonardlai1222/education-space:<< pipeline.git.tag >>
       - docker/push:
-          image: leonardlai1222/education-space
-          tag: 0.1.0
+          image: leonardlai1222/education-space:<< pipeline.git.tag >>
 
 workflows:
   version: 2
