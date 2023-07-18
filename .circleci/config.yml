@@ -1,7 +1,8 @@
 version: 2.1
 orbs:
   node: circleci/node@5.0.1
-  docker: circleci/docker@2.2.0
+  docker: circleci/docker@2.1.4
+  snyk: snyk/snyk@1.5.0
 jobs:
   build:
     docker:
@@ -23,40 +24,26 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
-  build-and-push:
-    executor: docker/docker
+  scan:
+    docker:
+        - image: cimg/node:16.10
+    environment:
+        IMAGE_NAME: leonardlai1222/education-space
     steps:
-      - setup_remote_docker
-      - checkout
-      - docker/check
-      - docker/build:
-          image: leonardlai1222/education-space
-          tag: << pipeline.git.tag >>
-      - docker/push:
-          image: leonardlai1222/education-space
-          tag: << pipeline.git.tag >>
-          
+        - checkout
+        - setup_remote_docker      
+        - docker/check
+        - run: docker build -t $IMAGE_NAME .
+        - snyk/scan: 
+            docker-image-name: $IMAGE_NAME
 
 workflows:
-  version: 2
   simple_workflow:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - main
+      - build
       - test:
           requires:
             - build
-          filters:
-            branches:
-              only:
-                - main
-      - build-and-push:
+      - scan:
           requires:
-            - test
-          filters:
-            tags:
-              only:
-                - /^v[0-9]+\.[0-9]+\.[0-9]+/
+            - build
